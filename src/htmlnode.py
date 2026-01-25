@@ -29,3 +29,30 @@ class HTMLNode:
     # prints an HTMLNode object for debugging to see its tag, value, children, props
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
+
+# child class of HTMLNode that does not have children
+class LeafNode(HTMLNode):
+
+    # contructor to initalize attributes
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
+
+    # render lead node as HTML string 
+    def to_html(self):
+        if self.value is None:
+            raise ValueError
+        
+        if self.tag is None:
+            return self.value
+        
+        if self.props is None:
+            return f'<{self.tag}>{self.value}</{self.tag}>'
+        else:
+            return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
+            
+    # override the parent __repr__ method
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
+    
+
+

@@ -2,7 +2,7 @@
 
 import unittest
 
-from htmlnode  import HTMLNode
+from htmlnode  import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
 	
@@ -24,6 +24,21 @@ class TestHTMLNode(unittest.TestCase):
 		self.assertTrue(html.startswith(" "))
 		self.assertIn('href1="https://www.test1.com"', html)
 		self.assertIn('href2="https://www.test2.com"', html)
-		
+
+	# test html rendered correctly with p tag
+	def test_leaf_to_html_p(self):
+		node = LeafNode("p", "Hello, world!")
+		self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+	# test html rendered no tag
+	def test_leaf_to_html_no_tag(self):
+		node = LeafNode(None, "Hello, world!")
+		self.assertEqual(node.to_html(), "Hello, world!")
+
+	# test html rendered with props
+	def test_leaf_to_html_with_props(self):
+		node = LeafNode("p", "Hello, world!", {"href": "https://www.test.com"})
+		self.assertEqual(node.to_html(), '<p href="https://www.test.com">Hello, world!</p>')
+
 if __name__ == "__main__":
 	unittest.main()
