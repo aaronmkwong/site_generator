@@ -37,7 +37,7 @@ class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
 
-    # render lead node as HTML string 
+    # render leaf node as HTML string 
     def to_html(self):
         if self.value is None:
             raise ValueError
@@ -53,6 +53,29 @@ class LeafNode(HTMLNode):
     # override the parent __repr__ method
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+    
+# child class of HTMLNode that has children
+class ParentNode(HTMLNode):
+
+    # constructor to initialize attributes
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+
+    # string of HTML tag of node and its children
+    def to_html(self):
+        if self.tag is None:
+            raise ValueError("tag is missing")
+        
+        if self.children is None:
+            raise ValueError("children is missing")
+        else:
+            html_children = ''
+            for child in self.children:
+                html_children += child.to_html()
+            return f'<{self.tag}{self.props_to_html()}>{html_children}</{self.tag}>'
+
+
+
     
 
 
