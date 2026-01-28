@@ -60,3 +60,49 @@ def text_node_to_html_node(text_node):
 
 	else:
 		raise Exception()
+
+# create TextNodes from raw markdown strings
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+	new_nodes = []
+	text_old_node = ''
+
+	for old_node in old_nodes:
+		text_old_node = old_node.text
+		count = text_old_node.count(delimiter)
+		
+		# only attempt to split "text" type objects (not bold, italic, etc)
+		if old_node.text_type != TextType.TEXT:
+			new_nodes.append(old_node)
+			continue
+		
+		# ensure only valid markdown syntax
+		if count == 0:
+			new_nodes.append(old_node)
+			continue 
+		
+		elif count % 2 != 0:
+			raise Exception('invalid markdown')
+		
+		split_text = old_node.text.split(delimiter)
+		for i, text in enumerate(split_text):
+			if text == "":
+				continue
+			elif ( i % 2)  != 0:
+				new_nodes.append(TextNode(text,text_type))
+			else:
+				new_nodes.append(TextNode(text,TextType.TEXT))
+	
+	return new_nodes 
+		
+
+
+			
+
+			
+
+
+
+
+		
+ 
+
