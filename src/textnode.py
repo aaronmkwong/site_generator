@@ -1,5 +1,6 @@
 from enum import Enum
 from htmlnode import LeafNode
+import re
 
 # types of inline text
 # since parsing markdown text to HTML text we need an intermediate representation
@@ -93,6 +94,17 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 				new_nodes.append(TextNode(text,TextType.TEXT))
 	
 	return new_nodes 
+
+# takes raw markdown text and return images as list of tuples
+def extract_markdown_images(text):
+	return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+
+# takes raw markdown text and return anchor text and urls as list of tuples
+def extract_markdown_links(text):
+	return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+
+
+
 		
 
 
