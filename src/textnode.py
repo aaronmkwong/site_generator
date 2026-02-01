@@ -103,9 +103,78 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
 	return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 
+# split raw markdown text into TextNodes based on images
+def split_nodes_image(old_nodes):
+	new_nodes = []
 
-
+	# loop over each existing TextNode and split any TEXT nodes by images
+	for old_node in old_nodes:
 		
+		# if this node is not plain TEXT, just keep it as-is
+		if old_node.text_type != TextType.TEXT:
+			new_nodes.append(old_node)
+			continue
+		
+		# repeatedly find the next image in the remaining text and split around it
+		text_remaining = old_node.text 
+		for string in extract_markdown_images(text_remaining):
+			alt_text = string[0]
+			img_text = string[1]
+			
+			before, after = text_remaining.split(f'![{alt_text}]({img_text})', maxsplit=1)
+			
+			# only create a TEXT node if there is non-empty text before the image
+			if before != '':
+				new_nodes.append(TextNode(before, TextType.TEXT))
+			
+			# create a IMAGE node for the current markdown image
+			new_nodes.append(TextNode(alt_text, TextType.IMAGE, img_text))
+
+			text_remaining = after
+
+		# after processing all images, if there is leftover text, keep it as TEXT
+		if text_remaining != "":
+			new_nodes.append(TextNode(text_remaining, TextType.TEXT))
+
+	return new_nodes
+	
+# split raw markdown text into TextNodes based on links
+def split_nodes_link(old_nodes):
+	new_nodes = []
+
+	# loop over each existing TextNode and split any TEXT nodes by links
+	for old_node in old_nodes:
+		
+		# if this node is not plain TEXT, just keep it as-is
+		if old_node.text_type != TextType.TEXT:
+			new_nodes.append(old_node)
+			continue
+		
+		# repeatedly find the next link in the remaining text and split around it
+		text_remaining = old_node.text 
+		for string in extract_markdown_links(text_remaining):
+			alt_text = string[0]
+			lnk_text = string[1]
+			
+			before, after = text_remaining.split(f'[{alt_text}]({lnk_text})', maxsplit=1)
+			
+			# only create a TEXT node if there is non-empty text before the link
+			if before != '':
+				new_nodes.append(TextNode(before, TextType.TEXT))
+			
+			# create a LINK node for the current markdown link
+			new_nodes.append(TextNode(alt_text, TextType.LINK, lnk_text))
+
+			text_remaining = after
+
+		# after processing all links, if there is leftover text, keep it as TEXT
+		if text_remaining != "":
+			new_nodes.append(TextNode(text_remaining, TextType.TEXT))
+
+	return new_nodes
+	
+
+
 
 
 			
