@@ -14,7 +14,6 @@ class TextType(Enum):
         IMAGE = "image"
 
 # represents various types of inline text in HTML and markdown
-
 class TextNode:
 	# initialize  arguments
 	def __init__(self, text, text_type, url=None):
@@ -173,8 +172,17 @@ def split_nodes_link(old_nodes):
 
 	return new_nodes
 	
+# use "splitting" functions together to convert a raw string 
+# of markdown-flavored text into a list of TextNode objects
+def text_to_textnodes(text):
+	bold_node = split_nodes_delimiter([TextNode(text)], '**', TextType.BOLD)
+	ital_node = split_nodes_delimiter(bold_node, '*', TextType.ITALIC) 
+	code_node = split_nodes_delimiter(ital_node, "`", TextType.CODE) 
+	img_node = split_nodes_image(code_node)
+	lnk_node = split_nodes_link(img_node)
 
-
+	return lnk_node
+		
 
 
 			
