@@ -182,6 +182,17 @@ def text_to_textnodes(text):
 	lnk_node = split_nodes_link(img_node)
 
 	return lnk_node
+
+# takes a raw markdown string (representing a full document) 
+# and returns a list of "block" strings 
+def markdown_to_blocks(markdown):
+	split_mrkdwn = [] 
+	for string in markdown.split('\n\n'):
+		if len(string) == 0:
+			continue
+		split_mrkdwn.append(string.strip())
+	return split_mrkdwn
+		 
 		
 
 
