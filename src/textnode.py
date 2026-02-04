@@ -3,8 +3,7 @@ from htmlnode import LeafNode
 import re
 
 # types of inline text
-# since parsing markdown text to HTML text we need an intermediate representation
-
+# intermediate representation to parse markdown to HTML text
 class TextType(Enum):
         TEXT  = "text"
         BOLD = "bold"
@@ -193,7 +192,73 @@ def markdown_to_blocks(markdown):
 		split_mrkdwn.append(string.strip())
 	return split_mrkdwn
 		 
+# types of blocks
+class BlockType(Enum):
+        PARAGRAPH  = "paragraph"
+        HEADING = "heading"
+        CODE = "code"
+        QUOTE = "quote"
+        UNORDERED_LIST = "unordered_list"
+        ORDERED_LIST = "ordered_list"
+
+# takes single block of markdown text
+# and returns block type
+def block_to_block_to_type(block):
+
+	# check line conditions before overall condition check 
+	
+	# each line starts with a greater than character
+	for line in block.splitlines():
+		chk_line_quote = []
+		if line[0] == '>':
+			chk_line_quote.append(1)
+
+	# each line starts with a - character and space
+	for line in block.splitlines():
+		chk_line_unordered = []
+		if line[0] == '- ':
+			chk_line_unordered.append(1)
+	
+	# each line starts with a number and . character and a space
+	# number starts at 1 and increments by 1 for each line
+	item_count = 1
+	for line in block.splitlines():
+		chk_line_ordered = []
+		if re.match(r"^\d+\.\s",line):
+			if item_count == 1 and line[0] == 1:
+				chk_line_ordered.append(1)
+			elif ( line[0] - line[item_count-1] ) == 1:
+				chk_line_ordered.append(1)
+		item_count += 1
+
+	 # headings start with 1-6 # characters followed by space and heading text
+	if block[0] == '# ':
+		BlockType.HEADING
+	
+	# code blocks start with 3 backticks and newline, end with 3 backticks
+	elif block[0] == "```\n" and block[-1] == "```":
+		return BlockType.CODE
+	
+	# each line starts with a greater than character
+	elif sum(chk_line_quote) == 1:
+		return BlockType.QUOTE	
+
+	# each line starts with a - character and space
+	elif sum(chk_line_unordered) == 1:
+		return BlockType.UNORDERED_LIST	
+
+	# each line starts with a number and . character and a space
+	# number starts at 1 and increments by 1 for each line
+	elif sum(chk_line_ordered) == 1:
+		return BlockType.UNORDERED_LIST	
+
+	else:
+	 	return 'normal_paragraph' 
 		
+	
+	
+
+
 
 
 			
