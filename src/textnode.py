@@ -174,8 +174,8 @@ def split_nodes_link(old_nodes):
 # use "splitting" functions together to convert a raw string 
 # of markdown-flavored text into a list of TextNode objects
 def text_to_textnodes(text):
-	bold_node = split_nodes_delimiter([TextNode(text)], '**', TextType.BOLD)
-	ital_node = split_nodes_delimiter(bold_node, '*', TextType.ITALIC) 
+	bold_node = split_nodes_delimiter([TextNode(text, TextType.TEXT)], '**', TextType.BOLD)
+	ital_node = split_nodes_delimiter(bold_node, '_', TextType.ITALIC) 
 	code_node = split_nodes_delimiter(ital_node, "`", TextType.CODE) 
 	img_node = split_nodes_image(code_node)
 	lnk_node = split_nodes_link(img_node)
@@ -203,20 +203,20 @@ class BlockType(Enum):
 
 # takes single block of markdown text
 # and returns block type
-def block_to_block_to_type(block):
+def block_to_block_type(block):
 
 	# check line conditions before overall condition check 
 	
 	# each line starts with a greater than character
+	chk_line_quote = []
 	for line in block.splitlines():
-		chk_line_quote = []
-		if line[0] == '>':
+		if line.startswith('>'):
 			chk_line_quote.append(1)
 
 	# each line starts with a - character and space
+	chk_line_unordered = []
 	for line in block.splitlines():
-		chk_line_unordered = []
-		if line[0] == '- ':
+		if line.startswith('- '):
 			chk_line_unordered.append(1)
 	
 	# each line starts with a number and . character and a space
@@ -232,11 +232,11 @@ def block_to_block_to_type(block):
 		item_count += 1
 
 	 # headings start with 1-6 # characters followed by space and heading text
-	if block[0] == '# ':
-		BlockType.HEADING
+	if block.startswith('# '):
+		return BlockType.HEADING
 	
 	# code blocks start with 3 backticks and newline, end with 3 backticks
-	elif block[0] == "```\n" and block[-1] == "```":
+	elif block.startswith("```\n") and block.endswith("```"):
 		return BlockType.CODE
 	
 	# each line starts with a greater than character
@@ -253,7 +253,7 @@ def block_to_block_to_type(block):
 		return BlockType.UNORDERED_LIST	
 
 	else:
-	 	return 'normal_paragraph' 
+	 	return BlockType.PARAGRAPH 
 		
 	
 	
