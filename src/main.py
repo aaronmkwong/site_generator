@@ -1,19 +1,10 @@
 from copystatic import copy_directory_recursive
+from gencontent import generate_page
 
-# previous project lines retained but commented out in case needed
-#from  textnode import TextType, TextNode
-
-def Main():
-	copy_directory_recursive("static", "public")
+def main():
+    copy_directory_recursive("static", "public")
+    generate_page('content/index.md', 'template.html', 'public/index.html')
 	
-	# previous project lines retained but commented out in case needed
-      
-	# node = TextNode("this is some anchor text", TextType.LINK, "https://www.boot.dev")
-	# print(node)
-
 # main() function only called when file directly run
 if __name__ == "__main__":
-    Main()
-
-    copy_directory_recursive("static", "public")
-   
+      main()

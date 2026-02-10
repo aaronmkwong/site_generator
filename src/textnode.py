@@ -219,16 +219,20 @@ def block_to_block_type(block):
 		if line.startswith('- '):
 			chk_line_unordered.append(1)
 	
-	# each line starts with a number and . character and a space
-	# number starts at 1 and increments by 1 for each line
+    # each line starts with a number and . character and a space
+    # number starts at 1 and increments by 1 for each line
 	item_count = 1
-	for line in block.splitlines():
-		chk_line_ordered = []
-		if re.match(r"^\d+\.\s",line):
-			if item_count == 1 and line[0] == 1:
-				chk_line_ordered.append(1)
-			elif ( line[0] - line[item_count-1] ) == 1:
-				chk_line_ordered.append(1)
+	chk_line_ordered = []
+	blk_lines = block.splitlines()
+
+	for line in blk_lines:
+		expected_prefix = f"{item_count}. "
+
+		if line.startswith(expected_prefix):
+			chk_line_ordered.append(1)
+		else:
+			chk_line_ordered.append(0)
+		
 		item_count += 1
 
 	 # headings start with 1-6 # characters followed by space and heading text
@@ -240,34 +244,17 @@ def block_to_block_type(block):
 		return BlockType.CODE
 	
 	# each line starts with a greater than character
-	elif sum(chk_line_quote) == 1:
+	elif sum(chk_line_quote) == len(block.splitlines()):
 		return BlockType.QUOTE	
 
 	# each line starts with a - character and space
-	elif sum(chk_line_unordered) == 1:
+	elif sum(chk_line_unordered) == len(block.splitlines()):
 		return BlockType.UNORDERED_LIST	
 
 	# each line starts with a number and . character and a space
 	# number starts at 1 and increments by 1 for each line
-	elif sum(chk_line_ordered) == 1:
-		return BlockType.UNORDERED_LIST	
-
+	elif sum(chk_line_ordered) == len(block.splitlines()):
+		return BlockType.ORDERED_LIST	
+	
 	else:
-	 	return BlockType.PARAGRAPH 
-		
-	
-	
-
-
-
-
-			
-
-			
-
-
-
-
-		
- 
-
+		return BlockType.PARAGRAPH
