@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 from copystatic import copy_directory_recursive
 from gencontent import generate_pages_recursive
@@ -8,6 +10,11 @@ def main():
         basepath = sys.argv[1]
     else:
         basepath = "/"
+
+    dir_path = "docs"
+
+    if os.path.exists(dir_path) and os.path.isdir(dir_path):
+        shutil.rmtree(dir_path) 
 
     copy_directory_recursive("static", "docs")
     generate_pages_recursive('content/', 'template.html', 'docs/', basepath)
