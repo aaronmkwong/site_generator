@@ -11,7 +11,7 @@ def extract_title(markdown):
 	raise Exception('no h1 header')
 	
 # create HMTL page
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     # Print status message
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
@@ -33,7 +33,9 @@ def generate_page(from_path, template_path, dest_path):
     # Replace placeholders in template
     full_html = template_content.replace("{{ Title }}", title)
     full_html = full_html.replace("{{ Content }}", html_content)
-
+    full_html = full_html.replace('href="/', f'href="{basepath}')
+    full_html = full_html.replace('src="/', f'src="{basepath}')
+    
     # Ensure destination directory exists
     dest_dir = os.path.dirname(dest_path)
     if dest_dir != "" and not os.path.exists(dest_dir):
@@ -44,7 +46,7 @@ def generate_page(from_path, template_path, dest_path):
        dest_file.write(full_html)
 
 # create HMTL pages recursively
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
  
     # Ensure destination directory exists
     if not os.path.exists(dest_dir_path):
@@ -57,11 +59,11 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
 
         # If entry is a directory, recurse
         if os.path.isdir(src_path):
-            generate_pages_recursive(src_path, template_path, dest_path)
+            generate_pages_recursive(src_path, template_path, dest_path, basepath)
 
         # If entry is a markdown file, generate HTML
         elif entry.endswith(".md"):
             # Change .md to .html in destination
             dest_file_path = dest_path.replace(".md", ".html")
 
-            generate_page(src_path, template_path, dest_file_path)
+            generate_page(src_path, template_path, dest_file_path, basepath)
